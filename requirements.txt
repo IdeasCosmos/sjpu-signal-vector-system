@@ -7,3 +7,4 @@ python-control>=0.10.1
 scikit-learn>=1.5.1
 numpy
 pandas
+pytest
