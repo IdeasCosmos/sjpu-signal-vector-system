@@ -1,10 +1,11 @@
-numpy>=1.26.4
-scipy>=1.14.1
-mpmath>=1.3.0
-sympy>=1.13.3
-faiss-cpu>=1.9.0
-python-control>=0.10.1
-scikit-learn>=1.5.1
 numpy
 pandas
+pytest
+numpy
+scipy
+control
+mpmath
+sympy
+faiss-cpu  # FAISS 설치 (CPU 버전)
+scikit-learn
 pytest
