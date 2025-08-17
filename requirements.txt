@@ -1,11 +1,8 @@
-numpy
-pandas
-pytest
-numpy
-scipy
-control
-mpmath
-sympy
-faiss-cpu  # FAISS 설치 (CPU 버전)
-scikit-learn
-pytest
+numpy==1.26.4
+scipy==1.13.1
+control==0.9.4
+mpmath==1.3.0
+sympy==1.12
+# faiss-cpu==1.8.0  # 주석 처리 - 설치 실패 우회
+scikit-learn==1.5.0
+pytest==8.3.2
