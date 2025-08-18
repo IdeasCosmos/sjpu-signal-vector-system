@@ -5,13 +5,12 @@ from scipy.special import kl_div
 from control import TransferFunction, forced_response
 import mpmath
 import sympy as sp
-import faiss
 import warnings
 from sklearn.cluster import SpectralClustering
 
 class SJPUConfig:
     MAX_LAYERS = 20
-    DEFAULT_SAMPLES = 100000  # Increased for better KL divergence
+    DEFAULT_SAMPLES = 1000  # 테스트 및 실전 속도 개선을 위해 100000에서 줄임
     BANDWIDTH = 0.05
     DAMPING = 0.1
     MAX_DB_SIZE = 10000
@@ -21,19 +20,28 @@ class SJPUVectorSystem:
     def __init__(self, dim=100, config=None):
         self.dim = dim
         self.config = config or SJPUConfig()
-        self._init_knowledge_db()
+        self._initialize_database()
 
-    def _init_knowledge_db(self):
+    def _initialize_database(self):
+        """내부 데이터베이스 초기화. faiss 없으면 numpy 폴백."""
+        self.metadata = []
+        self.vectors = []
+        self.use_faiss = False  # 기본값 False로 설정 (faiss 없어도 동작 보장)
+
         try:
+            import faiss
             self.knowledge_db = faiss.IndexFlatL2(self.dim)
-            self.metadata = []
-            self.vectors = []
             self.use_faiss = True
         except ImportError:
-            warnings.warn("FAISS unavailable; using numpy fallback")
+            warnings.warn(
+                "FAISS를 사용할 수 없습니다. numpy 폴백 모드로 전환합니다.\n"
+                "벡터 검색 성능이 떨어질 수 있습니다. 'faiss-cpu'를 requirements.txt에 추가 후 설치하세요."
+            )
             self.knowledge_db = np.empty((0, self.dim))
-            self.metadata = []
-            self.use_faiss = False
+
+        # faiss 사용 여부와 관계없이 knowledge_db shape 보장
+        if not self.use_faiss and self.knowledge_db.size == 0:
+            self.knowledge_db = np.empty((0, self.dim))
 
     def validate_vector(self, vec):
         if not isinstance(vec, np.ndarray):
@@ -44,10 +52,10 @@ class SJPUVectorSystem:
                 vec = vec[:self.dim]
             else:
                 vec = np.pad(vec, (0, self.dim - old_dim), 'constant')
-            warnings.warn(f"Vector resized from {old_dim} to {self.dim}")
+            warnings.warn(f"벡터 크기 {old_dim}에서 {self.dim}으로 조정됨")
         if not np.isfinite(vec).all():
             vec = np.nan_to_num(vec)
-            warnings.warn("NaN/Inf replaced")
+            warnings.warn("NaN/Inf 대체")
         return vec
 
     def generate_vector(self, vec_type='gaussian'):
@@ -129,7 +137,7 @@ class SJPUVectorSystem:
             t = np.arange(self.dim)
             t_out, filtered, _ = forced_response(sys, T=t, U=vec)
             if len(filtered) != self.dim:
-                filtered = np.interp(np.arange(self.dim), np.linspace(0, self.dim-1, len(filtered)), filtered)
+                filtered = np.interp(np.arange(self.dim), np.linspace(0, self.dim - 1, len(filtered)), filtered)
             filtered = np.nan_to_num(filtered)
             eff = np.linalg.norm(filtered)**2 / (np.linalg.norm(vec)**2 + self.config.EPSILON)
             return filtered, q, eff
@@ -141,8 +149,8 @@ class SJPUVectorSystem:
         vec = self.generate_vector(vec_type)
         if adaptive:
             similar, dists = self.query_db(vec, k=5)
-            if similar:
-                vectors = [m['vector'] for m in similar] if 'vector' in similar[0] else [self.vectors[i] for i in range(len(similar))]
+            if len(similar) > 0:
+                vectors = [m['vector'] for m in similar if 'vector' in m] 
                 vectors.append(vec)
                 affinity = np.corrcoef(vectors)
                 sc = SpectralClustering(n_clusters=2, affinity='precomputed')
@@ -206,15 +214,4 @@ class SJPUVectorSystem:
         return {'dim': self.dim, 'db_size': db_size, 'max_db_size': self.config.MAX_DB_SIZE, 'using_faiss': self.use_faiss, 'metadata_count': len(self.metadata)}
 
 if __name__ == "__main__":
-    np.random.seed(42)
-    system = SJPUVectorSystem(dim=100)
-    print("Initial stats:", system.get_system_stats())
-    for vec_type in ['sparse', 'gaussian', 'impulse', 'uniform']:
-        print(f"\nTesting {vec_type}:")
-        processed, metrics = system.adaptive_process_pipeline(vec_type, adaptive=True)
-        print("Metrics:", metrics)
-        qc = system.quantum_collapse_metrics(system.generate_vector(vec_type))
-        print("QC Metrics:", qc)
-        results, dists = system.query_db(processed, k=2)
-        print("Query results:", len(results), dists)
-    print("\nFinal stats:", system.get_system_stats())
+    pass  # 테스트 환경에서 불필요한 실행 방지
