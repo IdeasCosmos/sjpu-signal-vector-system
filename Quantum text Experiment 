@@ -1,0 +1,70 @@
+ 🧪 SJPU 기본 기능 테스트 시작
+==================================================
+2025-08-25 17:35:42,627 - PredictiveHybridSJPU - DEBUG - Core components initialized
+2025-08-25 17:35:42,628 - PredictiveHybridSJPU - INFO - SJPU System initialized with MEDIUM performance level
+
+📝 테스트 1: '안녕하세요! 오늘 날씨가 정말 좋네요.'
+2025-08-25 17:35:42,628 - PredictiveHybridSJPU - DEBUG - Processing mode selected: quantum
+2025-08-25 17:35:42,629 - PredictiveHybridSJPU - DEBUG - Executing quantum processing
+   모드: quantum
+   처리시간: 0.001초
+   메모리: 0.0MB
+   품질점수: 0.79
+   효율성: 0.94
+   결과: 안녕하세요! 정말 좋네요.
+   ✅ 성공
+
+📝 테스트 2: '인공지능의 발전은 인류에게 많은 변화를 가져올 것 입니다...'
+2025-08-25 17:35:42,629 - PredictiveHybridSJPU - DEBUG - Processing mode selected: quantum
+2025-08-25 17:35:42,629 - PredictiveHybridSJPU - DEBUG - Executing quantum processing
+   모드: quantum
+   처리시간: 0.000초
+   메모리: 0.0MB
+   품질점수: 0.85
+   효율성: 0.96
+   결과: 인공지능의 발전은 인류에게 변화를 가져올 인공지능의  발전은 인류에게 변화를 가져올 인공지능...
+   ✅ 성공
+
+📝 테스트 3: '짧은 텍스트'
+2025-08-25 17:35:42,630 - PredictiveHybridSJPU - DEBUG - Processing mode selected: quantum
+2025-08-25 17:35:42,630 - PredictiveHybridSJPU - DEBUG - Executing quantum processing
+   모드: quantum
+   처리시간: 0.000초
+   메모리: 0.0MB
+   품질점수: 0.91
+   효율성: 0.97
+   결과: 짧은 텍스트
+   ✅ 성공
+
+📝 테스트 4: '이것은 매우 긴 텍스트입니다. 이것은 매우 긴 텍스 트입...'
+2025-08-25 17:35:42,630 - PredictiveHybridSJPU - DEBUG - Processing mode selected: quantum
+2025-08-25 17:35:42,630 - PredictiveHybridSJPU - DEBUG - Executing quantum processing
+   모드: quantum
+   처리시간: 0.000초
+   메모리: 0.0MB
+   품질점수: 0.66
+   효율성: 0.90
+   결과: 매우 ⟨⟩ *긴* 텍스트입니다. 매우 ⟨⟩ *긴* 텍스트입니다. 매우 ⟨⟩ *긴* 텍스트입...
+   ✅ 성공
+
+🔄 배치 처리 테스트
+2025-08-25 17:35:42,631 - PredictiveHybridSJPU - DEBUG - Processing mode selected: quantum
+2025-08-25 17:35:42,631 - PredictiveHybridSJPU - DEBUG - Processing mode selected: quantum
+   배치 처리 완료: 2/2
+
+📊 시스템 통계:
+   total_processed: 4
+   mode_distribution: {'quantum': 4}
+   average_processing_time: 0.000
+   average_memory_usage: 0.000
+   error_rate: 0.000
+   cache_hit_rate: 0.333
+   cache_size: 4
+   performance_level: MEDIUM
+   current_memory_usage: 31.352
+   recent_avg_efficiency: 0.941
+   recent_avg_quality: 0.803
+
+✅ 모든 테스트 완료!
+
+[Program finished]
